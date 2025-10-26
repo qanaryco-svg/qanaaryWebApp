@@ -1,0 +1,792 @@
+/* Font stack: prefer IranSans (local files in /public/fonts/), fall back to Vazirmatn from Google Fonts, then system sans */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark theme + animated hero glow variables */
+:root {
+  /* Spacing scale (rem-based) */
+  --space-0: 0.25rem; /* 4px */
+  --space-1: 0.5rem;  /* 8px */
+  --space-2: 0.75rem; /* 12px */
+  --space-3: 1rem;    /* 16px */
+  --space-4: 1.5rem;  /* 24px */
+  --space-5: 2rem;    /* 32px */
+  --space-6: 3rem;    /* 48px */
+
+  /* Typographic scale */
+  --font-base: 16px;
+  --h1: 2.5rem; /* 40px */
+  --h2: 1.5rem;  /* 24px */
+  --h3: 1.125rem; /* 18px */
+  --lead: 1rem;   /* 16px */
+
+  /* Dark theme tokens */
+  --bg: #071018; /* deep navy black */
+  --surface: #0f1724;
+  --inner: #09121a;
+  --accent: #f2c94c; /* warm yellow (call-to-action) */
+  --accent-600: #f6d26a;
+  --text: #e6eef8; /* light text */
+  --muted: #9aa6b2;
+  --shadow-light: rgba(255,255,255,0.04);
+  --shadow-dark: rgba(2,6,23,0.6);
+  --neo-radius: 14px;
+  --neo-radius-sm: 10px;
+  --transition-fast: 160ms;
+  --transition-medium: 320ms;
+
+  /* Hero glow colors (used in animated radial gradients) */
+  --hero-glow-1: rgba(255, 238, 0, 0.24); /* yellow */
+  --hero-glow-2: rgba(108,124,88,0.12); /* requested #6c7c58 subtle glow */
+  --hero-glow-3: rgba(150,87,255,0.10); /* purple */
+  /* Tunable glow motion settings */
+  --hero-glow-speed: 100s;
+  --hero-glow-blur: 5px; /* stronger blur for a larger soft halo */
+  --hero-glow-saturate: 150;
+  --hero-glow-intensity: 100; /* multiplier for hero gradients (1 = base) */
+  /* Header-specific tuning (makes header glow pop more than hero) */
+  --header-glow-blur: 26px;
+  --header-glow-intensity: 1.59;
+}
+
+/* Light theme overrides (apply when html does NOT have .dark) */
+html:not(.dark) {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --inner: #f7fafc;
+  --accent: #F3ca16; /* requested yellow */
+  --accent-600: #f4d84a;
+  --text: #0b1220;
+  --muted: #475569;
+  --shadow-light: rgba(0,0,0,0.04);
+  --shadow-dark: rgba(2,6,23,0.06);
+}
+
+/* Dark theme explicit (applies when html.dark is present) */
+html.dark {
+  --bg: #071018;
+  --surface: #0f1724;
+  --inner: #09121a;
+  --accent: #F3ca16;
+  --accent-600: #f4d84a;
+  --text: #e6eef8;
+  --muted: #9aa6b2;
+}
+
+
+/* Font stack: prefer IranSans (local files in /public/fonts/), fall back to Vazirmatn from Google Fonts, then system sans */
+@font-face {
+  font-family: 'IranSans';
+  src: url('/fonts/IranSans.woff') format('woff'),
+       url('/fonts/A-Iranian-Sans/Iranian Sans.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IranSans';
+  src: url('/fonts/IranSans.woff') format('woff'),
+       url('/fonts/A-Iranian-Sans/Iranian Sans.ttf') format('truetype');
+  /* Bold fallback to same TTF if no separate bold file available */
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body, #__next {
+  height: 100%;
+  background: linear-gradient(180deg, var(--bg), var(--inner));
+  color: var(--text);
+  font-family: 'IranSans', 'Vazirmatn', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Persian font tweaks */
+body, input, button, textarea {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  @apply bg-transparent text-gray-100;
+  direction: rtl; /* keep RTL layout for Persian content */
+}
+
+.container {
+  @apply max-w-6xl mx-auto px-4;
+}
+
+/* Constrain important page content to a 1024px client width when desired */
+.max-w-client-1024 {
+  max-width: 64rem; /* 1024px */
+  width: 100%;
+}
+
+button {
+  border: none;
+}
+
+.bg-qanari { background-color: var(--accent); }
+.text-qanariDark { color: #6c7c58; }
+
+/* Buttons */
+.btn-primary {
+  padding: 1.25rem 1.5rem;
+  font-weight: 600;
+  display: inline-block;
+  border-radius: 9999px;
+  background: rgba(243,202,22,0.15);
+  border: 1px solid rgba(243,202,22,0.3);
+  color: var(--text);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 
+    0 6px 20px rgba(243,202,22,0.12),
+    0 1px 0 rgba(255,255,255,0.1) inset;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: rgba(243,202,22,0.25);
+  border-color: rgba(243,202,22,0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(243,202,22,0.15),
+    0 1px 0 rgba(255,255,255,0.15) inset;
+}
+
+.btn-cta {
+  padding: 1.25rem 1.5rem;
+  font-weight: 600;
+  display: inline-block;
+  border-radius: 9999px;
+  background: rgba(243,202,22,0.2);
+  border: 1px solid rgba(243,202,22,0.35);
+  color: var(--text);
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 
+    0 6px 20px rgba(243,202,22,0.15),
+    0 1px 0 rgba(255,255,255,0.1) inset;
+  transition: all 0.3s ease;
+}
+
+.btn-cta:hover {
+  background: rgba(243,202,22,0.3);
+  border-color: rgba(243,202,22,0.45);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(243,202,22,0.2),
+    0 1px 0 rgba(255,255,255,0.15) inset;
+}
+
+/* Card and hover utilities */
+.card {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.card:hover {
+  transform: translateY(-3px); /* reduce lift to avoid overlapping sticky header */
+  box-shadow: 0 8px 22px rgba(2,6,23,0.56);
+}
+
+.btn-primary:hover, .btn-cta:hover, button:hover {
+  filter: brightness(0.95);
+}
+
+/* Hero background subtle pan/zoom (Ken Burns) */
+.hero-bg {
+  position: relative;
+  overflow: hidden;
+  will-change: background-position, background-size, transform;
+  /* establish stacking context so pseudo-elements can be layered correctly */
+  z-index: 0;
+}
+
+/* Make hero full-bleed: stretch edge-to-edge ignoring the container padding
+   and ensure content inside is centered within the page width. */
+.hero-bg {
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+/* Animated soft colored glow layer using layered radial-gradients */
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* layered, stronger radial gradients for a more visible glow */
+  background-image:
+  radial-gradient(36rem 22rem at 8% 18%, rgba(243,202,22,0.28) 0%, transparent 32%),
+  radial-gradient(34rem 24rem at 85% 82%, rgba(108,124,88,0.18) 0%, transparent 34%),
+    radial-gradient(30rem 18rem at 50% 62%, rgba(150,87,255,0.14) 0%, transparent 38%);
+  background-repeat: no-repeat;
+  /* larger background sizes give a wider and softer halo */
+  background-size: 180% 180%, 170% 170%, 180% 180%;
+  mix-blend-mode: screen;
+  /* stronger blur + higher saturation + subtle contrast to make glow pop */
+  filter: blur(var(--hero-glow-blur)) saturate(var(--hero-glow-saturate)) contrast(1.02);
+  opacity: 1;
+  transform: translateZ(0) scale(1.02);
+  animation: hero-glow-move var(--hero-glow-speed) cubic-bezier(.2,.6,.2,1) infinite alternate;
+  z-index: 0; /* behind content */
+}
+
+/* Dark vignette overlay */
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2,6,23,0.18), rgba(2,6,23,0.42));
+  pointer-events: none;
+  z-index: 1; /* sit above the glow but below the actual content */
+}
+
+/* Ensure the hero background image fits by pixel ratio and has a subtle hover animation. */
+.hero-image {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover; /* keep cover for responsive fit */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform-origin: center;
+  transition: transform 600ms ease, background-size 600ms ease, filter 400ms ease;
+  will-change: transform, background-size;
+}
+.hero-image:hover {
+  transform: scale(1.02);
+  background-size: 100%;
+  filter: saturate(1.06) contrast(1.02);
+}
+
+/* If the user prefers reduced motion, avoid hover/animation effects */
+@media (prefers-reduced-motion: reduce) {
+  .hero-image { transition: none !important; transform: none !important; background-size: cover !important; }
+}
+
+@keyframes hero-glow-move {
+  0% {
+    /* start from the far left/top and far right/bottom to maximize sweep */
+    background-position: 0% 10%, 95% 95%, 50% 40%;
+    opacity: 0.88;
+    transform: translateZ(0) scale(1.00);
+  }
+  35% {
+    background-position: 20% 8%, 80% 92%, 40% 60%;
+    opacity: 1;
+    transform: translateZ(0) scale(1.015);
+  }
+  65% {
+    background-position: 30% 22%, 60% 70%, 30% 75%;
+    opacity: 0.98;
+    transform: translateZ(0) scale(1.02);
+  }
+  100% {
+    background-position: 15% 35%, 100% 60%, 70% 80%;
+    opacity: 0.9;
+    transform: translateZ(0) scale(1.01);
+  }
+}
+
+/* Header animations */
+.header-logo {
+  transition: transform 260ms ease, filter 260ms ease;
+}
+.header-logo:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.nav-link {
+  display: inline-block;
+  position: relative;
+  transition: all 220ms cubic-bezier(.2,.8,.2,1);
+}
+.nav-link:hover {
+  transform: translateY(-3px);
+  color: var(--accent);
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--accent);
+  transform: scaleX(0);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+}
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.cart-badge {
+  transform-origin: center;
+  animation: badge-pulse 1400ms ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg::before, .hero-bg::after { animation: none !important; }
+  .header-logo, .nav-link, .cart-badge { transition: none !important; animation: none !important; }
+}
+
+/* Utility: subtle glass panel used across the app */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(6px) saturate(1.05);
+}
+
+/* Header-specific glass: slightly stronger blur, subtle shadow and stronger border for legibility */
+.header-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.018));
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0 0 9999px 9999px;
+  margin: 0 1rem;
+  backdrop-filter: blur(10px) saturate(1.06);
+  -webkit-backdrop-filter: blur(10px) saturate(1.06);
+  box-shadow: 
+    0 6px 20px rgba(2,6,23,0.25),
+    0 10px 30px -10px rgba(2,6,23,0.2);
+  z-index: 9999; /* ensure header is above floating cards */
+}
+
+/* Subtle animated glow on the header to echo the hero */
+.header-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* stronger, slightly larger radial gradients so the header is more visible */
+  background-image: radial-gradient(44rem 18rem at 8% 18%, rgba(243,202,22,var(--header-glow-intensity)), transparent 1%), radial-gradient(30rem 14rem at 82% 82%, rgba(108,124,88,0.08), transparent 34%);
+  mix-blend-mode: screen;
+  /* make the header glow a bit stronger and more saturated */
+  filter: blur(var(--header-glow-blur)) saturate(var(--hero-glow-saturate));
+  opacity: 1;
+  transform: translateZ(0) scale(1.01);
+  animation: header-glow-move 12s cubic-bezier(.2,.6,.2,1) infinite alternate;
+  z-index: 0;
+  /* subtle outer halo for extra pop */
+  box-shadow: 0 8px 24px rgba(243,202,22,0.06) inset;
+}
+
+/* Hover: intensify header glow briefly to draw attention */
+.header-glass:hover::before {
+  opacity: 1.06;
+  transform: translateZ(0) scale(1.03);
+  filter: blur(calc(var(--header-glow-blur) + 6px)) saturate(calc(var(--hero-glow-saturate) * 1.18));
+}
+
+@keyframes header-glow-move {
+  0% { background-position: 0% 20%, 100% 80%; opacity: 0.75; }
+  50% { background-position: 10% 10%, 90% 70%; opacity: 1; }
+  100% { background-position: 20% 30%, 80% 60%; opacity: 0.8; }
+}
+
+/* Ensure hero-bg covers fully and has slightly intensified glow */
+.hero-bg.fullscreen::before {
+  /* stronger fullscreen treatment: even larger background sizes and slightly higher opacity */
+  filter: blur(var(--hero-glow-blur)) saturate(var(--hero-glow-saturate)) contrast(1.03);
+  opacity: 1;
+  background-size: 200% 200%, 180% 180%, 200% 200%;
+}
+
+/* ensure hero content sits above the glow and vignette */
+.hero-bg .relative {
+  z-index: 2;
+  position: relative; /* reinforce stacking context */
+}
+
+/* spacing utility: keeps a clear gap between the hero and the following content */
+.hero-bottom-gap {
+  margin-top: 3rem; /* 48px */
+}
+
+/* Fallback padding so main content is never covered by the sticky header / compact topbar.
+   Uses the --site-header-offset set by Header.js when available, otherwise falls back to 64px. */
+main {
+  padding-top: var(--site-header-offset, 64px);
+}
+
+/* Debug visual for header/spacing: opt-in by adding `debug-header-spacing` on the <html> element.
+   Example (in browser console):
+     document.documentElement.classList.add('debug-header-spacing')
+   Remove with:
+     document.documentElement.classList.remove('debug-header-spacing')
+*/
+html.debug-header-spacing::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0; /* top:0; left:0; right:0; bottom:auto */
+  height: var(--site-header-offset, 64px);
+  background: rgba(220,38,38,0.08); /* red-ish overlay */
+  border-bottom: 2px dashed rgba(220,38,38,0.6);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+html.debug-header-spacing header {
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12) inset;
+  outline: 2px solid rgba(59,130,246,0.18);
+}
+
+html.debug-header-spacing .small-bar {
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.08) inset;
+  outline: 2px solid rgba(16,185,129,0.18);
+}
+
+select {
+  background: rgba(26, 26, 26, 0.6); /* Semi-transparent dark background */
+  color: #f5f5f5; /* Light text */
+  border: 1px solid rgba(243, 202, 22, 0.2); /* Subtle yellow border */
+  padding: 0.75rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 
+    0 4px 15px rgba(243, 202, 22, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(243, 202, 22, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1.2rem;
+}
+
+select:hover {
+  background-color: rgba(26, 26, 26, 0.7);
+  border-color: rgba(243, 202, 22, 0.3);
+  box-shadow: 
+    0 6px 20px rgba(243, 202, 22, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  transform: translateY(-1px);
+}
+
+select:focus {
+  outline: none;
+  border-color: rgba(243, 202, 22, 0.4);
+  box-shadow: 
+    0 6px 25px rgba(243, 202, 22, 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-1px);
+}
+
+option {
+  background-color: rgba(26, 26, 26, 0.95);
+  color: #f5f5f5;
+  padding: 8px 16px;
+}
+
+label {
+  color: #f5f5f5;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+select:focus + label {
+  color: var(--accent);
+}
+
+/* Fade-in animation for motion-safe class */
+@keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0);} }
+.motion-safe\:animate-fade-in { animation: fade-in 240ms ease-out; }
+
+/* Dark-mode modal tweaks */
+.fixed.inset-0.bg-black\/40 { backdrop-filter: blur(6px); }
+
+/* small UI tweaks for badges */
+.badge-icon { width: 20px; height: 20px; display: inline-block; border-radius: 999px; }
+
+/* Hero / decorative glows and CTA styles (added for reference look) */
+.hero-full { position: relative; min-height: 64vh; display:block; }
+.hero-bg {
+  background-image: linear-gradient(180deg, rgba(5,13,20,0.55), rgba(5,13,20,0.6)), url('/R.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.05) contrast(0.9);
+  position: absolute; inset:0; z-index: 0;
+}
+.hero-overlay { z-index: 5; position: relative; }
+
+/* decorative blur spots */
+.hero-glow { position:absolute; z-index:2; pointer-events:none; filter: blur(48px) saturate(1.15); opacity:0.9; }
+.hero-glow-left { width:420px; height:420px; left:-80px; top:40px; background: radial-gradient(circle at 20% 20%, rgba(108,124,88,0.45), rgba(108,124,88,0.08) 40%, transparent 60%); mix-blend-mode: screen; }
+.hero-glow-right { width:420px; height:420px; right:-80px; bottom:40px; background: radial-gradient(circle at 80% 80%, rgba(243,202,22,0.42), rgba(243,202,22,0.06) 30%, transparent 60%); mix-blend-mode: screen; }
+
+/* CTA button tokens */
+.btn-cta {
+  background: var(--accent);
+  color: #0b0b0b;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(243,202,22,0.14);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(243,202,22,0.18); }
+
+/* ghost button */
+.btn-ghost {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 9999px;
+  backdrop-filter: blur(8px) saturate(1.2);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 0 4px 15px rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,255,255,0.08);
+}
+
+/* Category tile style (half image + label stripe) */
+.category-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:1.25rem; }
+.category-tile {
+  position:relative;
+  overflow:hidden;
+  border-radius:8px;
+  background: rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  height:120px;
+  display:flex;
+  align-items:stretch;
+}
+.category-tile .thumb { flex:1 1 60%; background-size:cover; background-position:center; }
+.category-tile .meta { flex:0 0 40%; display:flex; align-items:center; justify-content:center; padding:0 1rem; background: rgba(255,255,255,0.04); position:relative; }
+.category-tile .meta .label {
+  writing-mode: vertical-rl; transform: rotate(180deg); text-align:center; font-weight:700; color:#fff; background: rgba(0,0,0,0.18); padding:8px 12px; border-radius:4px;
+}
+
+/* product card -> stronger CTA and price */
+.product-card .price { font-weight:700; color:var(--accent-600); }
+.product-card .add-btn { padding:6px 10px; font-size:0.95rem; }
+
+/* cart drawer (left-side) */
+.cart-drawer .drawer { width: 380px; max-width: 86vw; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow: 0 8px 40px rgba(0,0,0,0.45); padding:16px; border-radius:6px 0 0 6px; }
+.cart-drawer .cart-item { display:flex; gap:10px; align-items:center; padding:10px; border-bottom:1px dashed rgba(255,255,255,0.04); }
+.cart-drawer .qty-controls button { background:transparent; border:1px solid rgba(255,255,255,0.06); padding:6px; border-radius:6px; }
+
+/* modal scroll lock hint (if used) */
+.modal-open { overflow:hidden; }
+
+/* Gradient text animation for Best Sellers and category header */
+@keyframes gradient-text {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.animate-gradient-text {
+  background: linear-gradient(90deg, var(--accent), #fffbe6, var(--accent-600));
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-text 2.5s linear infinite alternate;
+}
+
+/* Animated underline for category header */
+.animate-gradient-underline {
+  position: relative;
+}
+.animate-gradient-underline::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0; right: 0; bottom: -4px; height: 4px;
+  background: linear-gradient(90deg, var(--accent), #fffbe6, var(--accent-600));
+  background-size: 200% 200%;
+  animation: gradient-text 2.5s linear infinite alternate;
+  border-radius: 2px;
+}
+
+/* Hide scrollbar utility for sliders */
+.hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Professional discount badge animation */
+@keyframes discount-professional {
+  0% {
+    transform: scale(0.92) rotate(-8deg);
+    box-shadow: 0 0 0 0 rgba(229,57,53,0.18);
+    filter: brightness(0.95) blur(0.5px);
+    opacity: 0.7;
+  }
+  15% {
+    transform: scale(1.08) rotate(2deg);
+    box-shadow: 0 0 12px 2px rgba(229,57,53,0.22);
+    filter: brightness(1.08) blur(0.5px);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(1.14) rotate(-2deg);
+    box-shadow: 0 0 18px 4px rgba(229,57,53,0.28);
+    filter: brightness(1.12) blur(0.5px);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.08) rotate(0deg);
+    box-shadow: 0 0 10px 2px rgba(229,57,53,0.18);
+    filter: brightness(1.04) blur(0.5px);
+    opacity: 0.98;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    box-shadow: 0 0 0 0 rgba(229,57,53,0.18);
+    filter: brightness(1) blur(0px);
+    opacity: 1;
+  }
+}
+.animate-discount-badge {
+  animation: discount-professional 1.8s cubic-bezier(.2,.8,.2,1) infinite;
+  box-shadow: 0 2px 12px rgba(243,202,22,0.18);
+}
+
+/* Neumorphic comment reply style */
+.text-xs.bg-gray-100 {
+  background: #4949494d;
+  box-shadow: 6px 6px 12px #5a5a5a63,
+             -6px -6px 12px #0a0a0a46;
+  color: #e6e6e6;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.text-xs.bg-gray-100:hover {
+  box-shadow: 4px 4px 8px #3b3b3b63,
+             -4px -4px 8px #3333335b;
+  transform: translateY(-1px);
+}
+
+/* Mobile header: icon-only nav and search overlay */
+.mobile-icon-only .nav-link { padding: 6px; }
+.nav-icon { display: inline-block; }
+.nav-text { display: inline-block; }
+
+/* minimal icon SVG styling used across header */
+.icon-svg {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  color: currentColor;
+}
+
+/* mobile-specific: force simple black icons for header titles */
+@media (max-width: 767px) {
+  .mobile-icon { color: #000 !important; }
+  .mobile-icon .icon-svg { width: 18px; height: 18px; color: #000 !important; }
+}
+
+/* Ensure theme toggle is visible and consistent */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--text);
+  background: transparent;
+}
+.theme-toggle .theme-emoji {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-block;
+  color: inherit;
+}
+
+/* Keep nav items on a single line to avoid pushing the theme button out */
+header .container nav { white-space: nowrap; }
+
+/* Prevent nav items from wrapping and ensure theme toggle is visible */
+header .container nav { white-space: nowrap; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; }
+
+/* If header content risks overflow, allow horizontal scrolling on very small screens */
+@media (max-width: 420px) {
+  header .container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  header .container nav { gap: 6px; }
+}
+
+/* header overlay search (full-screen on mobile) */
+.mobile-search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.6);
+  z-index: 99999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3.5rem 1rem 1rem;
+}
+.mobile-search-box {
+  width: 100%;
+  max-width: 720px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.5rem;
+  border-radius: 12px;
+  display:flex;
+  gap:8px;
+}
+.mobile-search-box input {
+  flex:1;
+  padding: 0.75rem 0.75rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 1rem;
+}
+.mobile-search-close {
+  background: transparent; border: none; color: var(--text); font-size: 1.25rem; padding: 0.5rem; border-radius: 9999px;
+}
+
+/* ensure nav text hidden on small screens while icons remain */
+@media (max-width: 767px) {
+  .nav-link span.hidden\:md\:inline { display: none !important; }
+  .nav-link span.md\:hidden { display: inline !important; }
+  /* Make header nav titles and icons smaller on mobile */
+  header .container nav .nav-link {
+    font-size: 0.85rem;
+  }
+  header .container nav .nav-link span,
+  header .container nav .nav-link svg {
+    font-size: 1.1rem !important;
+    width: 1.1em !important;
+    height: 1.1em !important;
+  }
+}
+
+

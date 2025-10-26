@@ -1,0 +1,18 @@
+[build]
+  command = "npm run build && npm run export"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20.19.4"
+  NPM_VERSION = "10.2.3"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"

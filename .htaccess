@@ -1,0 +1,73 @@
+<IfModule mod_passenger.c>
+  PassengerEnabled on
+  PassengerAppType node
+  # PassengerStartupFile should match the entry script (server.js)
+  PassengerStartupFile server.js
+  # Optionally specify the node binary path if your host requires it
+  # PassengerNodejs /opt/cpanel/ea-nodejs20/bin/node
+  # PassengerAppEnv controls the app environment Passenger uses. When set to
+  # "development", Passenger will show friendly startup error pages with
+  # stack traces and environment dumps (useful for debugging). For public
+  # sites you should set this to "production" to avoid exposing sensitive
+  # details. The line below is commented out by default; enable it on
+  # development/staging only:
+  # PassengerAppEnv development
+  # For production (recommended):
+  # PassengerAppEnv production
+</IfModule>
+
+# Allow rewrites to index if needed (Passenger will handle the node app)
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# .htaccess for deploying the static export to shared hosting (public_html)
+# Place this file in public_html (or in the exported `out/` folder before uploading).
+
+# 1) SPA fallback: if the requested path is not a real file or directory,
+# serve index.html so client-side routing works.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # If request is for an existing file or directory, serve it normally
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Otherwise rewrite to index.html (preserve query string)
+  RewriteRule ^ index.html [L,QSA]
+</IfModule>
+
+# 2) Optional: Force HTTPS (uncomment if SSL is configured for your domain)
+#<IfModule mod_rewrite.c>
+#  RewriteEngine On
+#  RewriteCond %{HTTPS} !=on
+#  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#</IfModule>
+
+# 3) Security headers (optional; remove or adjust if your host disallows Header directives)
+<IfModule mod_headers.c>
+  # Prevent MIME sniffing
+  Header set X-Content-Type-Options "nosniff"
+  # Basic XSS protection for older browsers
+  Header set X-XSS-Protection "1; mode=block"
+  # Prevent clickjacking
+  Header always append X-Frame-Options SAMEORIGIN
+  # HSTS (uncomment if you are serving HTTPS site)
+  # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+# 4) Leverage browser caching for static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 week"
+  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# 5) Prevent directory listing
+Options -Indexes
+
+# End of file
