@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -137,3 +138,14 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+=======
+.env.local
+node_modules/
+.next/
+dist/
+/*.log
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+>>>>>>> 2a1e703 (Initial commit for Netlify deployment)

@@ -1,0 +1,17 @@
+# Enable Rewrite Engine
+RewriteEngine On
+
+# اگر درخواست برای فایل یا دایرکتوری واقعی نیست
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# همه درخواست‌ها را به qanaaryWebApp هدایت کن
+RewriteRule ^(.*)$ /qanaaryWebApp/$1 [P,L]
+
+# تنظیمات Passenger
+PassengerEnabled on
+PassengerAppRoot /home/cp63896235438/qanaaryWebApp
+PassengerBaseURI /
+PassengerAppType node
+PassengerStartupFile server.js
+PassengerNodejs /usr/local/bin/node
